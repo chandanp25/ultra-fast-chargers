@@ -1,9 +1,9 @@
 import time
 
 from base_reader import BaseReader
-from constants import PECC
-from constants_manager import ConstantsManager
-from message_helper import Module1Message as mm1, Module2Message as mm2
+from constants import PECC, CanId
+from power_60kw.constant_manager_60kw import ConstantManager60KW
+from power_60kw.message_helper import Module1Message as mm1, ModuleMessage as mm
 from utility import bytetobinary, binaryToDecimal, DTH
 
 
@@ -12,11 +12,11 @@ class Vehicle1StatusReader(BaseReader):
 
     def __init__(self, data):
         self.data = data
-        self._global_data = ConstantsManager()
+        self._global_data = ConstantManager60KW()
         self._binary_data = bytetobinary(data)
 
     def read_input_data(self):
-        vs1 = bytetobinary()
+        vs1 = self._binary_data
         self._global_data.set_data_status_vehicle1(binaryToDecimal(int(vs1[0])))
         vehicle_status1 = binaryToDecimal(int(vs1[0]))
         print('vhst1', vehicle_status1)
@@ -50,35 +50,35 @@ class Vehicle1StatusReader(BaseReader):
             cable_check_voltage1 = binaryToDecimal(int(vs1[7] + vs1[6]))
 
             if cable_check_voltage1 <= 500:
-                mm1.lowMode1()
-                mm2.lowMode2()
+                mm.lowMode(CanId.CAN_ID_1)
+                mm.lowMode(CanId.CAN_ID_2)
             if cable_check_voltage1 > 500:
-                mm1.highMode1()
-                mm2.highMode2()
+                mm.highMode(CanId.CAN_ID_1)
+                mm.highMode(CanId.CAN_ID_2)
 
-            mm1.setVoltage1(DTH.convertohex(cable_check_voltage1))
-            mm2.setVoltage2(DTH.convertohex(cable_check_voltage1))
-            mm1.startModule1()
-            mm2.startModule2()
-            mm1.readModule_Voltage_1()
+            mm.setVoltage(DTH.convertohex(cable_check_voltage1), CanId.CAN_ID_1)
+            mm.setVoltage(DTH.convertohex(cable_check_voltage1), CanId.CAN_ID_2)
+            mm.startModule(CanId.CAN_ID_1)
+            mm.startModule(CanId.CAN_ID_2)
+            mm.readModule_Voltage(CanId.CAN_ID_1)
 
             digitl_input = self._global_data.get_data()
             if digitl_input[3] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
-                mm2.stopModule2()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_2)
                 PECC.STATUS1_GUN1_DATA[0] = 9
-                mm1.digital_output_open_stop1()
+                mm.digital_output_open_stop(CanId.CAN_ID_1)
                 time.sleep(5)
-                mm1.digital_output_open_fan()
+                mm.digital_output_open_fan()
 
             if digitl_input[3] == '0':
                 PECC.STATUS1_GUN1_DATA[0] = 5
 
             if digitl_input[1] == '0' or digitl_input[2] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
-                mm2.stopModule2()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_2)
                 PECC.STATUS1_GUN1_DATA[0] = 1
 
         if vehicle_status1 == 13 and vehicle_status2_g == 2 or vehicle_status1 == 13 and vehicle_status2_g == 37 or vehicle_status1 == 13 and vehicle_status2_g == 35:
@@ -86,7 +86,7 @@ class Vehicle1StatusReader(BaseReader):
             PECC.LIMITS1_DATA[5] = 2
             PECC.LIMITS2_DATA[2] = 150
             PECC.LIMITS2_DATA[3] = 0
-            mm2.stopModule2()
+            mm.stopModule(CanId.CAN_ID_2)
             mm1.digital_output_Gun1_load2()
             PECC.STATUS1_GUN1_DATA[2] = binaryToDecimal(int(vs1[2]))
             PECC.STATUS1_GUN1_DATA[1] = binaryToDecimal(int(vs1[1]))
@@ -97,21 +97,19 @@ class Vehicle1StatusReader(BaseReader):
             cable_check_voltage1 = binaryToDecimal(int(vs1[7] + vs1[6]))
 
             if cable_check_voltage1 <= 500:
-                mm1.lowMode1()
+                mm.lowMode(CanId.CAN_ID_1)
 
             if cable_check_voltage1 > 500:
-                mm1.highMode1()
+                mm.highMode(CanId.CAN_ID_1)
 
-            mm1.setVoltage1(DTH.convertohex(cable_check_voltage1))
-
-            mm1.startModule1()
-
-            mm1.readModule_Voltage_1()
+            mm.setVoltage(DTH.convertohex(cable_check_voltage1), CanId.CAN_ID_1)
+            mm.stopModule(CanId.CAN_ID_1)
+            mm.readModule_Voltage(CanId.CAN_ID_1)
 
             digitl_input = self._global_data.get_data()
             if digitl_input[3] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
 
                 PECC.STATUS1_GUN1_DATA[0] = 9
                 mm1.digital_output_open_load1()
@@ -120,9 +118,9 @@ class Vehicle1StatusReader(BaseReader):
                 PECC.STATUS1_GUN1_DATA[0] = 5
 
             if digitl_input[1] == '0' or digitl_input[2] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
-                mm2.stopModule2()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_2)
                 PECC.STATUS1_GUN1_DATA[0] = 1
 
         if vehicle_status1 == 13 and vehicle_status2_g == 13 or vehicle_status1 == 13 and vehicle_status2_g == 21 or vehicle_status1 == 13 and vehicle_status2_g == 29:
@@ -140,22 +138,21 @@ class Vehicle1StatusReader(BaseReader):
             cable_check_voltage1 = binaryToDecimal(int(vs1[7] + vs1[6]))
 
             if cable_check_voltage1 <= 500:
-                mm1.lowMode1()
+                mm.lowMode(CanId.CAN_ID_1)
 
             if cable_check_voltage1 > 500:
-                mm1.highMode1()
+                mm.highMode(CanId.CAN_ID_1)
 
-            mm1.setVoltage1(DTH.convertohex(cable_check_voltage1))
+            mm.setVoltage(DTH.convertohex(cable_check_voltage1), CanId.CAN_ID_1)
+            mm.startModule(CanId.CAN_ID_1)
 
-            mm1.startModule1()
-
-            mm1.readModule_Voltage_1()
+            mm.readModule_Voltage(CanId.CAN_ID_1)
 
             digitl_input = self._global_data.get_data()
             if digitl_input[3] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
-
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
+                
                 PECC.STATUS1_GUN1_DATA[0] = 9
                 mm1.digital_output_open_load1()
 
@@ -163,9 +160,9 @@ class Vehicle1StatusReader(BaseReader):
                 PECC.STATUS1_GUN1_DATA[0] = 5
 
             if digitl_input[1] == '0' or digitl_input[2] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
-                mm2.stopModule2()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_2)
                 PECC.STATUS1_GUN1_DATA[0] = 1
 
         if vehicle_status1 == 21 and vehicle_status2_g == 0 or vehicle_status1 == 21 and vehicle_status2_g == 6:
@@ -180,31 +177,30 @@ class Vehicle1StatusReader(BaseReader):
             PECC.STATUS1_GUN1_DATA[4] = binaryToDecimal(int(vs1[4]))
             PECC.STATUS1_GUN1_DATA[0] = 1
             if target_volatge_from_car1 <= 500:
-                mm2.lowMode2()
+                mm.lowMode(CanId.CAN_ID_2)
 
             if target_volatge_from_car1 > 500:
-                mm2.highMode2()
+                mm.highMode(CanId.CAN_ID_2)
 
-            mm1.setVoltage1(DTH.convertohex(int(target_volatge_from_car1)))
-            mm2.setVoltage2(DTH.convertohex(int(target_volatge_from_car1)))
-
+            mm.setVoltage(DTH.convertohex(int(target_volatge_from_car1)), CanId.CAN_ID_1)
+            mm.setVoltage(DTH.convertohex(int(target_volatge_from_car1)), CanId.CAN_ID_2)
             RUNNING_CURRENT = int(target_current_from_car1)
 
             self._global_data.set_data_running_current(RUNNING_CURRENT)
-            mm1.setCurrent1()
-            mm2.setCurrent2()
-            mm1.startModule1()
-            mm2.startModule2()
-            mm1.readModule_Voltage_1()
-            mm1.readModule_Current_1()
-            mm2.readModule_Current_2()
+            mm.setCurrent(CanId.CAN_ID_1)
+            mm.setCurrent(CanId.CAN_ID_2)
+            mm.startModule(CanId.CAN_ID_1)
+            mm.startModule(CanId.CAN_ID_2)
+            mm.readModule_Voltage(CanId.CAN_ID_1)
+            mm.readModule_Current(CanId.CAN_ID_1)
+            mm.readModule_Current(CanId.CAN_ID_2)
             digitl_input = self._global_data.get_data()
             if digitl_input[3] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
-                mm2.stopModule2()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_2)
                 PECC.STATUS1_GUN1_DATA[0] = 9
-                mm1.digital_output_open_stop1()
+                mm.digital_output_open_stop(CanId.CAN_ID_1)
                 time.sleep(5)
                 mm1.digital_output_open_fan()
 
@@ -212,9 +208,9 @@ class Vehicle1StatusReader(BaseReader):
                 PECC.STATUS1_GUN1_DATA[0] = 5
 
             if digitl_input[1] == '0' or digitl_input[2] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
-                mm2.stopModule2()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_2)
                 PECC.STATUS1_GUN1_DATA[0] = 1
 
         if vehicle_status1 == 21 and vehicle_status2_g == 2 or vehicle_status1 == 21 and vehicle_status2_g == 35 or vehicle_status1 == 21 and vehicle_status2_g == 37:
@@ -222,27 +218,27 @@ class Vehicle1StatusReader(BaseReader):
             PECC.LIMITS1_DATA[5] = 2
             PECC.LIMITS2_DATA[2] = 150
             PECC.LIMITS2_DATA[3] = 0
-            mm2.stopModule2()
-            mm2.digital_output_Gun1_load2()
+            mm.stopModule(CanId.CAN_ID_2)
+            mm1.digital_output_Gun1_load2()
             PECC.STATUS1_GUN1_DATA[2] = binaryToDecimal(int(vs1[2]))
             PECC.STATUS1_GUN1_DATA[1] = binaryToDecimal(int(vs1[1]))
             PECC.STATUS1_GUN1_DATA[3] = binaryToDecimal(int(vs1[3]))
             PECC.STATUS1_GUN1_DATA[4] = binaryToDecimal(int(vs1[4]))
             PECC.STATUS1_GUN1_DATA[0] = 1
 
-            mm1.setVoltage1(DTH.convertohex(int(target_volatge_from_car1)))
+            mm.setVoltage(DTH.convertohex(target_volatge_from_car1), CanId.CAN_ID_1)
 
             RUNNING_CURRENT = int(target_current_from_car1 * 2)
 
             self._global_data.set_data_running_current(RUNNING_CURRENT)
-            mm1.setCurrent1()
-            mm1.startModule1()
-            mm1.readModule_Voltage_1()
-            mm1.readModule_Current_1()
+            mm.setCurrent(CanId.CAN_ID_1)
+            mm.startModule(CanId.CAN_ID_1)
+            mm.readModule_Voltage(CanId.CAN_ID_1)
+            mm.readModule_Current(CanId.CAN_ID_1)
             digitl_input = self._global_data.get_data()
             if digitl_input[3] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
                 PECC.STATUS1_GUN1_DATA[0] = 9
                 mm1.digital_output_open_load1()
 
@@ -250,9 +246,9 @@ class Vehicle1StatusReader(BaseReader):
                 PECC.STATUS1_GUN1_DATA[0] = 5
 
             if digitl_input[1] == '0' or digitl_input[2] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
-                mm2.stopModule2()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_2)
                 PECC.STATUS1_GUN1_DATA[0] = 1
 
         if vehicle_status1 == 21 and vehicle_status2_g == 13 or vehicle_status1 == 21 and vehicle_status2_g == 21 or vehicle_status1 == 21 and vehicle_status2_g == 29:
@@ -267,19 +263,19 @@ class Vehicle1StatusReader(BaseReader):
             PECC.STATUS1_GUN1_DATA[4] = binaryToDecimal(int(vs1[4]))
             PECC.STATUS1_GUN1_DATA[0] = 1
 
-            mm1.setVoltage1(DTH.convertohex(int(target_volatge_from_car1)))
+            mm.setVoltage(DTH.convertohex(target_volatge_from_car1), CanId.CAN_ID_1)
 
             RUNNING_CURRENT = int(target_current_from_car1 * 2)
 
             self._global_data.set_data_running_current(RUNNING_CURRENT)
-            mm1.setCurrent1()
-            mm1.startModule1()
-            mm1.readModule_Voltage_1()
-            mm1.readModule_Current_1()
+            mm.setCurrent(CanId.CAN_ID_1)
+            mm.startModule(CanId.CAN_ID_1)
+            mm.readModule_Voltage(CanId.CAN_ID_1)
+            mm.readModule_Current(CanId.CAN_ID_1)
             digitl_input = self._global_data.get_data()
             if digitl_input[3] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
                 PECC.STATUS1_GUN1_DATA[0] = 9
                 mm1.digital_output_open_load1()
 
@@ -287,9 +283,9 @@ class Vehicle1StatusReader(BaseReader):
                 PECC.STATUS1_GUN1_DATA[0] = 5
 
             if digitl_input[1] == '0' or digitl_input[2] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
-                mm2.stopModule2()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_2)
                 PECC.STATUS1_GUN1_DATA[0] = 1
 
         if vehicle_status1 == 29 and vehicle_status2_g == 0 or vehicle_status1 == 29 and vehicle_status2_g == 6:
@@ -304,31 +300,31 @@ class Vehicle1StatusReader(BaseReader):
             PECC.STATUS1_GUN1_DATA[4] = binaryToDecimal(int(vs1[4]))
             PECC.STATUS1_GUN1_DATA[0] = 1
             if target_volatge_from_car1 <= 500:
-                mm2.lowMode2()
+                mm.lowMode(CanId.CAN_ID_2)
 
             if target_volatge_from_car1 > 500:
-                mm2.highMode2()
+                mm.highMode(CanId.CAN_ID_2)
 
-            mm1.setVoltage1(DTH.convertohex(int(target_volatge_from_car1)))
-            mm2.setVoltage2(DTH.convertohex(int(target_volatge_from_car1)))
+            mm.setVoltage(DTH.convertohex(target_volatge_from_car1), CanId.CAN_ID_1)
+            mm.setVoltage(DTH.convertohex(int(target_volatge_from_car1)), CanId.CAN_ID_2)
 
             RUNNING_CURRENT = int(target_current_from_car1)
             self._global_data.set_data_running_current(RUNNING_CURRENT)
 
-            mm1.setCurrent1()
-            mm2.setCurrent2()
-            mm1.startModule1()
-            mm2.startModule2()
-            mm1.readModule_Voltage_1()
-            mm1.readModule_Current_1()
-            mm2.readModule_Current_2()
+            mm.setCurrent(CanId.CAN_ID_1)
+            mm.setCurrent(CanId.CAN_ID_2)
+            mm.startModule(CanId.CAN_ID_1)
+            mm.stopModule(CanId.CAN_ID_2)
+            mm.readModule_Voltage(CanId.CAN_ID_1)
+            mm.readModule_Current(CanId.CAN_ID_1)
+            mm.readModule_Current(CanId.CAN_ID_2)
             digitl_input = self._global_data.get_data()
             if digitl_input[3] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
-                mm2.stopModule2()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_2)
                 PECC.STATUS1_GUN1_DATA[0] = 9
-                mm1.digital_output_open_stop1()
+                mm.digital_output_open_stop(CanId.CAN_ID_1)
                 time.sleep(5)
                 mm1.digital_output_open_fan()
 
@@ -336,9 +332,9 @@ class Vehicle1StatusReader(BaseReader):
                 PECC.STATUS1_GUN1_DATA[0] = 5
 
             if digitl_input[1] == '0' or digitl_input[2] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
-                mm2.stopModule2()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_2)
                 PECC.STATUS1_GUN1_DATA[0] = 1
 
         if vehicle_status1 == 29 and vehicle_status2_g == 2 or vehicle_status1 == 29 and vehicle_status2_g == 35 or vehicle_status1 == 29 and vehicle_status2_g == 37:
@@ -347,25 +343,25 @@ class Vehicle1StatusReader(BaseReader):
             PECC.LIMITS2_DATA[2] = 150
             PECC.LIMITS2_DATA[3] = 0
             mm1.digital_output_Gun1_load2()
-            mm2.stopModule2()
+            mm.stopModule(CanId.CAN_ID_2)
             PECC.STATUS1_GUN1_DATA[2] = binaryToDecimal(int(vs1[2]))
             PECC.STATUS1_GUN1_DATA[1] = binaryToDecimal(int(vs1[1]))
             PECC.STATUS1_GUN1_DATA[3] = binaryToDecimal(int(vs1[3]))
             PECC.STATUS1_GUN1_DATA[4] = binaryToDecimal(int(vs1[4]))
 
-            mm1.setVoltage1(DTH.convertohex(int(target_volatge_from_car1)))
+            mm.setVoltage(DTH.convertohex(target_volatge_from_car1), CanId.CAN_ID_1)
 
             RUNNING_CURRENT = int(target_current_from_car1 * 2)
 
             self._global_data.set_data_running_current(RUNNING_CURRENT)
-            mm1.setCurrent1()
-            mm1.startModule1()
-            mm1.readModule_Voltage_1()
-            mm1.readModule_Current_1()
+            mm.setCurrent(CanId.CAN_ID_1)
+            mm.startModule(CanId.CAN_ID_1)
+            mm.readModule_Voltage(CanId.CAN_ID_1)
+            mm.readModule_Current(CanId.CAN_ID_1)
             digitl_input = self._global_data.get_data()
             if digitl_input[3] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
                 PECC.STATUS1_GUN1_DATA[0] = 9
                 mm1.digital_output_open_load1()
 
@@ -373,9 +369,9 @@ class Vehicle1StatusReader(BaseReader):
                 PECC.STATUS1_GUN1_DATA[0] = 5
 
             if digitl_input[1] == '0' or digitl_input[2] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
-                mm2.stopModule2()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_2)
                 PECC.STATUS1_GUN1_DATA[0] = 1
 
         if vehicle_status1 == 29 and vehicle_status2_g == 13 or vehicle_status1 == 29 and vehicle_status2_g == 21 or vehicle_status1 == 29 and vehicle_status2_g == 29:
@@ -389,19 +385,19 @@ class Vehicle1StatusReader(BaseReader):
             PECC.STATUS1_GUN1_DATA[3] = binaryToDecimal(int(vs1[3]))
             PECC.STATUS1_GUN1_DATA[4] = binaryToDecimal(int(vs1[4]))
 
-            mm1.setVoltage1(DTH.convertohex(int(target_volatge_from_car1)))
+            mm.setVoltage(DTH.convertohex(target_volatge_from_car1), CanId.CAN_ID_1)
 
             RUNNING_CURRENT = int(target_current_from_car1 * 2)
 
             self._global_data.set_data_running_current(RUNNING_CURRENT)
-            mm1.setCurrent1()
-            mm1.startModule1()
-            mm1.readModule_Voltage_1()
-            mm1.readModule_Current_1()
+            mm.setCurrent(CanId.CAN_ID_1)
+            mm.startModule(CanId.CAN_ID_1)
+            mm.readModule_Voltage(CanId.CAN_ID_1)
+            mm.readModule_Current(CanId.CAN_ID_1)
             digitl_input = self._global_data.get_data()
             if digitl_input[3] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
                 PECC.STATUS1_GUN1_DATA[0] = 9
                 mm1.digital_output_open_load1()
 
@@ -409,41 +405,41 @@ class Vehicle1StatusReader(BaseReader):
                 PECC.STATUS1_GUN1_DATA[0] = 5
 
             if digitl_input[1] == '0' or digitl_input[2] == '1':
-                mm1.stopcharging1()
-                mm1.stopModule1()
-                mm1.stopModule2()
+                mm.stopcharging(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_1)
+                mm.stopModule(CanId.CAN_ID_2)
                 PECC.STATUS1_GUN1_DATA[0] = 1
 
         if vehicle_status1 == 37 and vehicle_status2_g == 0 or vehicle_status1 == 35 and vehicle_status2_g == 0 or vehicle_status1 == 35 and vehicle_status2_g == 6 or vehicle_status1 == 37 and vehicle_status2_g == 6:
-            mm1.stopcharging1()
-            mm1.stopModule1()
-            mm2.stopModule2()
+            mm.stopcharging(CanId.CAN_ID_1)
+            mm.stopModule(CanId.CAN_ID_1)
+            mm.stopModule(CanId.CAN_ID_2)
             PECC.STATUS1_GUN1_DATA[2] = binaryToDecimal(int(vs1[2]))
             PECC.STATUS1_GUN1_DATA[1] = binaryToDecimal(int(vs1[1]))
             PECC.STATUS1_GUN1_DATA[3] = binaryToDecimal(int(vs1[3]))
             PECC.STATUS1_GUN1_DATA[4] = binaryToDecimal(int(vs1[4]))
             PECC.STATUS1_GUN1_DATA[0] = 1
-            mm1.digital_output_open_stop1()
+            mm.digital_output_open_stop(CanId.CAN_ID_1)
             time.sleep(5)
             mm1.digital_output_open_fan()
             PECC.STATUS1_GUN1_DATA[0] = 0
         if vehicle_status1 == 37 and vehicle_status2_g == 35 or vehicle_status1 == 35 and vehicle_status2_g == 37 or vehicle_status1 == 35 and vehicle_status2_g == 35 or vehicle_status1 == 37 and vehicle_status2_g == 35:
-            mm1.stopcharging1()
-            mm1.stopModule1()
-            mm2.stopModule2()
+            mm.stopcharging(CanId.CAN_ID_1)
+            mm.stopModule(CanId.CAN_ID_1)
+            mm.stopModule(CanId.CAN_ID_2)
             PECC.STATUS1_GUN1_DATA[2] = binaryToDecimal(int(vs1[2]))
             PECC.STATUS1_GUN1_DATA[1] = binaryToDecimal(int(vs1[1]))
             PECC.STATUS1_GUN1_DATA[3] = binaryToDecimal(int(vs1[3]))
             PECC.STATUS1_GUN1_DATA[4] = binaryToDecimal(int(vs1[4]))
             PECC.STATUS1_GUN1_DATA[0] = 1
-            mm1.digital_output_open_stop1()
+            mm.digital_output_open_stop(CanId.CAN_ID_1)
             time.sleep(5)
             mm1.digital_output_open_fan()
             PECC.STATUS1_GUN1_DATA[0] = 0
 
         if vehicle_status1 == 37 and vehicle_status2_g == 2 or vehicle_status1 == 37 and vehicle_status2_g == 13 or vehicle_status1 == 37 and vehicle_status2_g == 21 or vehicle_status1 == 37 and vehicle_status2_g == 29:
-            mm1.stopcharging1()
-            mm1.stopModule1()
+            mm.stopcharging(CanId.CAN_ID_1)
+            mm.stopModule(CanId.CAN_ID_1)
             PECC.STATUS1_GUN1_DATA[2] = binaryToDecimal(int(vs1[2]))
             PECC.STATUS1_GUN1_DATA[1] = binaryToDecimal(int(vs1[1]))
             PECC.STATUS1_GUN1_DATA[3] = binaryToDecimal(int(vs1[3]))
@@ -453,8 +449,8 @@ class Vehicle1StatusReader(BaseReader):
             PECC.STATUS1_GUN1_DATA[0] = 0
 
         if vehicle_status1 == 35 and vehicle_status2_g == 2 or vehicle_status1 == 35 and vehicle_status2_g == 13 or vehicle_status1 == 35 and vehicle_status2_g == 21 or vehicle_status1 == 35 and vehicle_status2_g == 29:
-            mm1.stopcharging1()
-            mm1.stopModule1()
+            mm.stopcharging(CanId.CAN_ID_1)
+            mm.stopModule(CanId.CAN_ID_1)
             PECC.STATUS1_GUN1_DATA[2] = binaryToDecimal(int(vs1[2]))
             PECC.STATUS1_GUN1_DATA[1] = binaryToDecimal(int(vs1[1]))
             PECC.STATUS1_GUN1_DATA[3] = binaryToDecimal(int(vs1[3]))

@@ -28,7 +28,7 @@ class SetInterval:
 
 class PECCStatusManager:
     # Bus interface
-    bus = CanInterface.bus_instance
+    bus = object
 
     @staticmethod
     def pecc_powers_voltage_limits_1():

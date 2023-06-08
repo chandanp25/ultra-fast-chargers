@@ -1,4 +1,6 @@
 
+FULL_POWER = 60  # This represents combined power configuration from all the modules in Kilo Watts(kW)
+
 
 class GunStatus:
     NO_CONNECTION = 0
@@ -7,12 +9,16 @@ class GunStatus:
     PRE_CHARGE = 21
     CHARGING = 29
     STOP_CHARGE = [35, 37]
-    CONNECTED = 2  #TODO: change the key to make it more appropriate for newly connected vehicle
+    CONNECTED = 2  # TODO: change the key to make it more appropriate for newly connected vehicle
 
 
 class CanId:
     CAN_ID_1 = 0x02204000
     CAN_ID_2 = 0x02208000
+    CAN_ID_3 = 0x0220C000
+    CAN_ID_4 = 0x02210000
+    CAN_ID_5 = 0x02214000
+    CAN_ID_6 = 0x02218000
     PECC_POWER_VOLTAGE_L2 = 0x604
     PECC_CURRENT_L2 = 0x605
     PECC_STATUS1_Gun2 = 0x602

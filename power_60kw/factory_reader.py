@@ -1,4 +1,4 @@
-from can_readers import *
+from power_60kw.can_readers import *
 
 
 class FactoryReader:

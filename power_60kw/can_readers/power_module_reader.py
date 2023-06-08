@@ -1,6 +1,7 @@
 from base_reader import BaseReader
 from constants import PECC
-from constants_manager import ConstantsManager
+from config_reader import ConfigManager
+from power_60kw.constant_manager_60kw import ConstantManager60KW
 from utility import bytetobinary, binaryToDecimal, DTH
 
 
@@ -8,7 +9,7 @@ class PowerModuleReader(BaseReader):
 
     def __init__(self, data):
         self.data = data
-        self._global_data = ConstantsManager()
+        self._global_data = ConstantManager60KW()
         self._vehicle_status1_g = None
         self._vehicle_status2_g = None
         self._diff_vol_current = None
@@ -21,7 +22,7 @@ class PowerModuleReader(BaseReader):
 
 
 class PowerModule1Reader(PowerModuleReader):
-    arbitration_id = 35677237
+    arbitration_id = ConfigManager().get_power_config('PS1_ID')
 
     def __init__(self, data):
         super().__init__(data)
@@ -51,7 +52,7 @@ class PowerModule1Reader(PowerModuleReader):
 
 
 class PowerModule2Reader(PowerModuleReader):
-    arbitration_id = 35693618
+    arbitration_id = ConfigManager().get_power_config('PS2_ID')
 
     def __init__(self, data):
         super().__init__(data)
