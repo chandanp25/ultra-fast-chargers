@@ -1,9 +1,12 @@
 import can
+import logging
 import threading
 import time
 
 from constants import PECC, CanId
 from caninterface import CanInterface
+
+logger = logging.getLogger(__name__)
 
 class SetInterval:
     def __init__(self,interval,action) :
@@ -13,8 +16,9 @@ class SetInterval:
         try:
             thread=threading.Thread(target=self.__setInterval)
             thread.start()
+            logger.info(f"Started thread for constant status update from following method: {action.__name__}")
         except threading.ThreadException as err:
-            pass
+            logger.error(f"Failed to start the thread for following method: {action.__name__}, error: {err}")
 
     def __setInterval(self) :
         nextTime=time.time()+self.interval
@@ -24,11 +28,11 @@ class SetInterval:
 
     def cancel(self) :
         self.stopEvent.set()
-
+        logger.info(f"Stopped status update from following method: {self.action.__name__}")
 
 class PECCStatusManager:
     # Bus interface
-    bus = object
+    bus = CanInterface.bus_instance
 
     @staticmethod
     def pecc_powers_voltage_limits_1():
@@ -84,7 +88,7 @@ def set_status_update():
     attributes = dir(PECCStatusManager)
 
     # Filter for methods
-    send_status_methods = [attr for attr in attributes if callable(getattr(PECCStatusManager, attr))]
+    send_status_methods = [attr for attr in attributes if callable(getattr(PECCStatusManager, attr)) and not attr.startswith('__')]
 
     # Invoke all the methods
     for send_status in send_status_methods:

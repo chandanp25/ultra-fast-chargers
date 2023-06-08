@@ -1,4 +1,7 @@
+import logging
 from power_240kw.can_readers import *
+
+logger = logging.getLogger(__name__)
 
 
 class FactoryReader:
@@ -21,5 +24,6 @@ class FactoryReader:
     def create_reader(arbitration_id):
         reader_class = FactoryReader.reader_dict.get(arbitration_id)
         if not reader_class:
-            print('No matching reader found for the arbitration ID')
+            logger.warning(f'No matching reader object found for the arbitration ID: {arbitration_id}')
+            return None
         return reader_class()

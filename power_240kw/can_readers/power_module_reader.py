@@ -1,9 +1,12 @@
+import logging
+
 from base_reader import BaseReader
 from constants import PECC
 from power_240kw.constant_manager_240kw import ConstantManager240KW
 from utility import bytetobinary, binaryToDecimal, DTH
 from config_reader import ConfigManager
 
+logger = logging.getLogger(__name__)
 
 class PowerModuleReader(BaseReader):
 
@@ -43,6 +46,7 @@ class PMSetDataCurrentPeccStatus1(PMSetDataCurrentPeccStatus):
         super().__init__(data, pecc_status)
 
     def read_input_data(self):
+        logger.info('Reading input for 240KW PECC-1 Status')
         bd = self._binary_data
         super().read_input_data()
         if self._diff_vol_current == 48:
@@ -57,6 +61,7 @@ class PMSetDataCurrentPeccStatus2(PMSetDataCurrentPeccStatus):
         super().__init__(data, pecc_status)
 
     def read_input_data(self):
+        logger.info('Reading input for 240KW PECC-2 Status')
         bd = self._binary_data
         super().read_input_data()
         if self._diff_vol_current == 48:
@@ -71,6 +76,7 @@ class PMSetDataCurrentPeccStatus3(PMSetDataCurrentPeccStatus):
         super().__init__(data, pecc_status)
 
     def read_input_data(self):
+        logger.info('Reading input for 240KW PECC-3 Status')
         bd = self._binary_data
         super().read_input_data()
         if self._diff_vol_current == 48:
@@ -92,6 +98,7 @@ class PMSetDataCurrentPeccStatus4(PMSetDataCurrentPeccStatus):
         super().__init__(data, pecc_status)
 
     def read_input_data(self):
+        logger.info('Reading input for 240KW PECC-4 Status')
         bd = self._binary_data
         super().read_input_data()
         if self._diff_vol_current == 48:
@@ -106,6 +113,7 @@ class PMSetDataCurrentPeccStatus5(PMSetDataCurrentPeccStatus):
         super().__init__(data, pecc_status)
 
     def read_input_data(self):
+        logger.info('Reading input for 240KW PECC-5 Status')
         bd = self._binary_data
         super().read_input_data()
         if self._diff_vol_current == 48:
@@ -120,6 +128,7 @@ class PMSetDataCurrentPeccStatus6(PMSetDataCurrentPeccStatus):
         super().__init__(data, pecc_status)
 
     def read_input_data(self):
+        logger.info('Reading input for 240KW PECC-6 Status')
         bd = self._binary_data
         super().read_input_data()
         if self._diff_vol_current == 48:

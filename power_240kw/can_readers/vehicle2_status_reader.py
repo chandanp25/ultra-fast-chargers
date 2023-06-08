@@ -1,3 +1,4 @@
+import logging
 import time
 
 from base_reader import BaseReader
@@ -5,6 +6,8 @@ from constants import PECC, CanId
 from power_240kw.constant_manager_240kw import ConstantManager240KW
 from power_240kw.message_helper import Module2Message as mm2, ModuleMessage as mm
 from utility import bytetobinary, binaryToDecimal, DTH
+
+logger = logging.getLogger(__name__)
 
 
 class Vehicle2StatusReader(BaseReader):
@@ -16,6 +19,7 @@ class Vehicle2StatusReader(BaseReader):
         self._binary_data = bytetobinary(data)
 
     def read_input_data(self):
+        logger.info('Read input for Vehicle-2 status')
         vs2 = self._binary_data
         self._global_data.set_data_status_vehicle2(binaryToDecimal(int(vs2[0])))
         vehicle_status2 = binaryToDecimal(int(vs2[0]))

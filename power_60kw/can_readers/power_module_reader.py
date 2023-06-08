@@ -1,8 +1,11 @@
+import logging
 from base_reader import BaseReader
 from constants import PECC
 from config_reader import ConfigManager
 from power_60kw.constant_manager_60kw import ConstantManager60KW
 from utility import bytetobinary, binaryToDecimal, DTH
+
+logger = logging.getLogger(__name__)
 
 
 class PowerModuleReader(BaseReader):
@@ -28,6 +31,7 @@ class PowerModule1Reader(PowerModuleReader):
         super().__init__(data)
 
     def read_input_data(self):
+        logger.info('Reading input for 60KW Power module-1')
         super().read_input_data()
         if self._diff_vol_current == 98:
             bd = self._binary_data
@@ -58,13 +62,13 @@ class PowerModule2Reader(PowerModuleReader):
         super().__init__(data)
 
     def read_input_data(self):
+        logger.info('Reading input for 60KW Power module-2')
         super().read_input_data()
+        bd = self._binary_data
         if self._diff_vol_current == 98:
-            bd = self._binary_data
             volatge_pe2 = binaryToDecimal(int(bd[4] + bd[5] + bd[6] + bd[7]))
             divide_vol2 = int(int(volatge_pe2) / 1000)
             t2 = int(divide_vol2) * 10
-            print('voltage2=', t2)
             vl2 = DTH.converttohexforpecc(hex(t2))
             PECC.STATUS2_GUN2_DATA[1] = vl2[0]
             PECC.STATUS2_GUN2_DATA[0] = vl2[1]
@@ -75,13 +79,12 @@ class PowerModule2Reader(PowerModuleReader):
             t = int(self._global_data.get_data_current_pe1()) / 1000
             if self._vehicle_status2_g == 0 or self._vehicle_status2_g == 6:
                 tot_current1 = int(current_pe2 + t) * 10
-                print('TOTAL CUERNET ===', tot_current1)
+
                 cu_vl_21 = DTH.converttohexforpecc(hex(tot_current1))
                 PECC.STATUS2_GUN1_DATA[3] = cu_vl_21[0]
                 PECC.STATUS2_GUN1_DATA[2] = cu_vl_21[1]
             if self._vehicle_status1_g == 0 or self._vehicle_status1_g == 6:
                 tot_current1 = int(current_pe2 + t) * 10
-                print('TOTAL CUERNET ===', tot_current1)
                 cu_vl_21 = DTH.converttohexforpecc(hex(tot_current1))
                 PECC.STATUS2_GUN2_DATA[3] = cu_vl_21[0]
                 PECC.STATUS2_GUN2_DATA[2] = cu_vl_21[1]
