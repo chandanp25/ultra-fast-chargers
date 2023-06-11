@@ -8,6 +8,7 @@ from caninterface import CanInterface
 
 logger = logging.getLogger(__name__)
 
+
 class SetInterval:
     def __init__(self,interval,action) :
         self.interval=interval
@@ -29,6 +30,7 @@ class SetInterval:
     def cancel(self) :
         self.stopEvent.set()
         logger.info(f"Stopped status update from following method: {self.action.__name__}")
+
 
 class PECCStatusManager:
     # Bus interface

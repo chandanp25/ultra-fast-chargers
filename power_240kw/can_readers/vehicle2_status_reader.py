@@ -80,7 +80,7 @@ class Vehicle2StatusReader(BaseReader):
                 mm.lowMode_b(can_id_list)
 
             if target_volatge_from_car2 > 500:
-                mm.lowMode_b(can_id_list)
+                mm.highMode_b(can_id_list)
     
             mm.setVoltage_b(DTH.convertohex(int(target_volatge_from_car2)), can_id_list)        
             mm.setVoltage_b(DTH.convertohex(int(target_volatge_from_car2)), can_id_list) 
