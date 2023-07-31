@@ -1,5 +1,6 @@
 # import the library
 import configparser
+import time
 
 from power_240kw.factory_reader import FactoryReader
 from caninterface import CanInterface
@@ -7,7 +8,7 @@ from persistent_communication import set_status_update
 
 
 def readAllCanData(d):
-    reader = FactoryReader.create_reader(d.arbitration_id)
+    reader = FactoryReader.create_reader(d.arbitration_id,d.data)
     if reader:
         reader.read_input_data()
 
@@ -19,5 +20,6 @@ def readFromCan():
 
 
 def perform_action():
+    time.sleep(40)
     set_status_update()
     readFromCan()
