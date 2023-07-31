@@ -28,6 +28,7 @@ class ConfigManager(metaclass=Singleton):
             raise ConfigException('Desired power is not part of app config')
         try:
             result = self._config.get(self._power, config_param)
+            return result
         except configparser.NoOptionError:
             logger.error('Unable to get PECC config for desired power')
             raise ConfigException('Unable to get PECC config for desired power')

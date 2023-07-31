@@ -121,7 +121,7 @@ class PMSetDataCurrentPeccStatus5(PMSetDataCurrentPeccStatus):
 
 
 class PMSetDataCurrentPeccStatus6(PMSetDataCurrentPeccStatus):
-    arbitration_id = ConfigManager().get_power_config('PS6_ID')
+    arbitration_id = int(ConfigManager().get_power_config('PS6_ID'))
 
     def __init__(self, data):
         pecc_status = PECC.STATUS2_GUN2_DATA

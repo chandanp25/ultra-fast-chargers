@@ -21,9 +21,9 @@ class FactoryReader:
     }
 
     @staticmethod
-    def create_reader(arbitration_id):
+    def create_reader(arbitration_id, data):
         reader_class = FactoryReader.reader_dict.get(arbitration_id)
         if not reader_class:
             logger.warning(f'No matching reader object found for the arbitration ID: {arbitration_id}')
             return None
-        return reader_class()
+        return reader_class(data)
