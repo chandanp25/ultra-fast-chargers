@@ -5,7 +5,7 @@ from config_reader import ConfigManager
 from power_60kw.constant_manager_60kw import ConstantManager60KW
 from utility import bytetobinary, binaryToDecimal, DTH
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 
 class PowerModuleReader(BaseReader):
@@ -31,7 +31,7 @@ class PowerModule1Reader(PowerModuleReader):
         super().__init__(data)
 
     def read_input_data(self):
-        logger.info('Reading input for 60KW Power module-1')
+        #logger.info('Reading input for 60KW Power module-1')
         super().read_input_data()
         if self._diff_vol_current == 98:
             bd = self._binary_data
@@ -62,7 +62,7 @@ class PowerModule2Reader(PowerModuleReader):
         super().__init__(data)
 
     def read_input_data(self):
-        logger.info('Reading input for 60KW Power module-2')
+        #logger.info('Reading input for 60KW Power module-2')
         super().read_input_data()
         bd = self._binary_data
         if self._diff_vol_current == 98:

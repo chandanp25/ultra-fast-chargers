@@ -3,7 +3,7 @@ import logging
 from exceptions import ConfigException
 from utility import Singleton
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 POWER_DICT = {
     60: 'power_60kw',
@@ -30,7 +30,7 @@ class ConfigManager(metaclass=Singleton):
             result = self._config.get(self._power, config_param)
             return result
         except configparser.NoOptionError:
-            logger.error('Unable to get PECC config for desired power')
+            #logger.error('Unable to get PECC config for desired power')
             raise ConfigException('Unable to get PECC config for desired power')
 
     def get_total_power(self):
@@ -39,5 +39,5 @@ class ConfigManager(metaclass=Singleton):
             result = self._config.get(total_power_key, 'TOTAL_POWER')
             return result
         except configparser.NoOptionError:
-            logger.error('Unable to get total power from config')
+            #logger.error('Unable to get total power from config')
             raise ConfigException('Unable to get total power from config')

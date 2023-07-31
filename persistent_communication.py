@@ -6,7 +6,7 @@ import time
 from constants import PECC, CanId
 from caninterface import CanInterface
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 
 class SetInterval:
@@ -17,9 +17,10 @@ class SetInterval:
         try:
             thread=threading.Thread(target=self.__setInterval)
             thread.start()
-            logger.info(f"Started thread for constant status update from following method: {action.__name__}")
+            #logger.info(f"Started thread for constant status update from following method: {action.__name__}")
         except threading.ThreadException as err:
-            logger.error(f"Failed to start the thread for following method: {action.__name__}, error: {err}")
+            pass
+            #logger.error(f"Failed to start the thread for following method: {action.__name__}, error: {err}")
 
     def __setInterval(self) :
         nextTime=time.time()+self.interval
@@ -29,7 +30,7 @@ class SetInterval:
 
     def cancel(self) :
         self.stopEvent.set()
-        logger.info(f"Stopped status update from following method: {self.action.__name__}")
+        #logger.info(f"Stopped status update from following method: {self.action.__name__}")
 
 
 class PECCStatusManager:
