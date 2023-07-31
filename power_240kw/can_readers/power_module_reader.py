@@ -6,7 +6,7 @@ from power_240kw.constant_manager_240kw import ConstantManager240KW
 from utility import bytetobinary, binaryToDecimal, DTH
 from config_reader import ConfigManager
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 class PowerModuleReader(BaseReader):
 
@@ -39,14 +39,14 @@ class PMSetDataCurrentPeccStatus(PowerModuleReader):
 
 
 class PMSetDataCurrentPeccStatus1(PMSetDataCurrentPeccStatus):
-    arbitration_id = ConfigManager().get_power_config('PS1_ID')
+    arbitration_id = int(ConfigManager().get_power_config('PS1_ID'))
 
     def __init__(self, data):
         pecc_status = PECC.STATUS2_GUN1_DATA
         super().__init__(data, pecc_status)
 
     def read_input_data(self):
-        logger.info('Reading input for 240KW PECC-1 Status')
+        #logger.info('Reading input for 240KW PECC-1 Status')
         bd = self._binary_data
         super().read_input_data()
         if self._diff_vol_current == 48:
@@ -54,14 +54,14 @@ class PMSetDataCurrentPeccStatus1(PMSetDataCurrentPeccStatus):
 
 
 class PMSetDataCurrentPeccStatus2(PMSetDataCurrentPeccStatus):
-    arbitration_id = ConfigManager().get_power_config('PS2_ID')
+    arbitration_id = int(ConfigManager().get_power_config('PS2_ID'))
 
     def __init__(self, data):
         pecc_status = PECC.STATUS2_GUN1_DATA
         super().__init__(data, pecc_status)
 
     def read_input_data(self):
-        logger.info('Reading input for 240KW PECC-2 Status')
+        #logger.info('Reading input for 240KW PECC-2 Status')
         bd = self._binary_data
         super().read_input_data()
         if self._diff_vol_current == 48:
@@ -69,14 +69,14 @@ class PMSetDataCurrentPeccStatus2(PMSetDataCurrentPeccStatus):
 
 
 class PMSetDataCurrentPeccStatus3(PMSetDataCurrentPeccStatus):
-    arbitration_id = ConfigManager().get_power_config('PS3_ID')
+    arbitration_id = int(ConfigManager().get_power_config('PS3_ID'))
 
     def __init__(self, data):
         pecc_status = PECC.STATUS2_GUN1_DATA
         super().__init__(data, pecc_status)
 
     def read_input_data(self):
-        logger.info('Reading input for 240KW PECC-3 Status')
+        #logger.info('Reading input for 240KW PECC-3 Status')
         bd = self._binary_data
         super().read_input_data()
         if self._diff_vol_current == 48:
@@ -91,14 +91,14 @@ class PMSetDataCurrentPeccStatus3(PMSetDataCurrentPeccStatus):
 
 
 class PMSetDataCurrentPeccStatus4(PMSetDataCurrentPeccStatus):
-    arbitration_id = ConfigManager().get_power_config('PS4_ID')
+    arbitration_id = int(ConfigManager().get_power_config('PS4_ID'))
 
     def __init__(self, data):
         pecc_status = PECC.STATUS2_GUN2_DATA
         super().__init__(data, pecc_status)
 
     def read_input_data(self):
-        logger.info('Reading input for 240KW PECC-4 Status')
+        #logger.info('Reading input for 240KW PECC-4 Status')
         bd = self._binary_data
         super().read_input_data()
         if self._diff_vol_current == 48:
@@ -106,14 +106,14 @@ class PMSetDataCurrentPeccStatus4(PMSetDataCurrentPeccStatus):
 
 
 class PMSetDataCurrentPeccStatus5(PMSetDataCurrentPeccStatus):
-    arbitration_id = ConfigManager().get_power_config('PS5_ID')
+    arbitration_id = int(ConfigManager().get_power_config('PS5_ID'))
 
     def __init__(self, data):
         pecc_status = PECC.STATUS2_GUN2_DATA
         super().__init__(data, pecc_status)
 
     def read_input_data(self):
-        logger.info('Reading input for 240KW PECC-5 Status')
+        #logger.info('Reading input for 240KW PECC-5 Status')
         bd = self._binary_data
         super().read_input_data()
         if self._diff_vol_current == 48:
@@ -121,14 +121,14 @@ class PMSetDataCurrentPeccStatus5(PMSetDataCurrentPeccStatus):
 
 
 class PMSetDataCurrentPeccStatus6(PMSetDataCurrentPeccStatus):
-    arbitration_id = ConfigManager().get_power_config('PS6_ID')
+    arbitration_id = int(ConfigManager().get_power_config('PS6_ID'))
 
     def __init__(self, data):
         pecc_status = PECC.STATUS2_GUN2_DATA
         super().__init__(data, pecc_status)
 
     def read_input_data(self):
-        logger.info('Reading input for 240KW PECC-6 Status')
+        #logger.info('Reading input for 240KW PECC-6 Status')
         bd = self._binary_data
         super().read_input_data()
         if self._diff_vol_current == 48:
