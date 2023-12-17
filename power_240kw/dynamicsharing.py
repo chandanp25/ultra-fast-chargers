@@ -2,13 +2,14 @@
 import configparser
 import time
 
-from power_240kw.factory_reader import FactoryReader
+from power_240kw.factory_reader import FactoryReader, ObjectManager
 from caninterface import CanInterface
 from persistent_communication import set_status_update
 
+obj_manager = ObjectManager()
 
 def readAllCanData(d):
-    reader = FactoryReader.create_reader(d.arbitration_id,d.data)
+    reader = FactoryReader.create_reader(d.arbitration_id,d.data, obj_manager)
     if reader:
         reader.read_input_data()
 

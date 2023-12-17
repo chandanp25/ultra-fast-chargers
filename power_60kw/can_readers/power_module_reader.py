@@ -10,22 +10,23 @@ from utility import bytetobinary, binaryToDecimal, DTH
 
 class PowerModuleReader(BaseReader):
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         self.data = data
         self._global_data = ConstantManager60KW()
         self._vehicle_status1_g = None
         self._vehicle_status2_g = None
         self._diff_vol_current = None
-        self._binary_data = bytetobinary(data)
+        self._binary_data = None
 
     def read_input_data(self):
+        self._binary_data = bytetobinary(self.data)
         self._vehicle_status2_g = self._global_data.get_data_status_vehicle2()
         self._vehicle_status1_g = self._global_data.get_data_status_vehicle1()
         self._diff_vol_current = binaryToDecimal(int(self._binary_data[1]))
 
 
 class PowerModule1Reader(PowerModuleReader):
-    arbitration_id = ConfigManager().get_power_config('PS1_ID')
+    arbitration_id = int(ConfigManager().get_power_config('PS1_ID'))
 
     def __init__(self, data):
         super().__init__(data)
@@ -56,7 +57,7 @@ class PowerModule1Reader(PowerModuleReader):
 
 
 class PowerModule2Reader(PowerModuleReader):
-    arbitration_id = ConfigManager().get_power_config('PS2_ID')
+    arbitration_id = int(ConfigManager().get_power_config('PS2_ID'))
 
     def __init__(self, data):
         super().__init__(data)

@@ -9,7 +9,7 @@ from utility import bytetobinary
 class DigitalInputReader(BaseReader):
     arbitration_id = 1282
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         self.data = data
         self._global_data = ConstantManager240KW()
 

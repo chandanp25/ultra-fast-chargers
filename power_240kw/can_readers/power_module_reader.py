@@ -10,13 +10,14 @@ from config_reader import ConfigManager
 
 class PowerModuleReader(BaseReader):
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         self.data = data
         self._global_data = ConstantManager240KW()
         self._diff_vol_current = None
-        self._binary_data = bytetobinary(data)
+        self._binary_data = None
 
     def read_input_data(self):
+        self._binary_data = bytetobinary(self.data)
         self._diff_vol_current = binaryToDecimal(int(self._binary_data[1]))
 
 
@@ -41,7 +42,7 @@ class PMSetDataCurrentPeccStatus(PowerModuleReader):
 class PMSetDataCurrentPeccStatus1(PMSetDataCurrentPeccStatus):
     arbitration_id = int(ConfigManager().get_power_config('PS1_ID'))
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         pecc_status = PECC.STATUS2_GUN1_DATA
         super().__init__(data, pecc_status)
 
@@ -56,7 +57,7 @@ class PMSetDataCurrentPeccStatus1(PMSetDataCurrentPeccStatus):
 class PMSetDataCurrentPeccStatus2(PMSetDataCurrentPeccStatus):
     arbitration_id = int(ConfigManager().get_power_config('PS2_ID'))
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         pecc_status = PECC.STATUS2_GUN1_DATA
         super().__init__(data, pecc_status)
 
@@ -71,7 +72,7 @@ class PMSetDataCurrentPeccStatus2(PMSetDataCurrentPeccStatus):
 class PMSetDataCurrentPeccStatus3(PMSetDataCurrentPeccStatus):
     arbitration_id = int(ConfigManager().get_power_config('PS3_ID'))
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         pecc_status = PECC.STATUS2_GUN1_DATA
         super().__init__(data, pecc_status)
 
@@ -93,7 +94,7 @@ class PMSetDataCurrentPeccStatus3(PMSetDataCurrentPeccStatus):
 class PMSetDataCurrentPeccStatus4(PMSetDataCurrentPeccStatus):
     arbitration_id = int(ConfigManager().get_power_config('PS4_ID'))
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         pecc_status = PECC.STATUS2_GUN2_DATA
         super().__init__(data, pecc_status)
 
@@ -108,7 +109,7 @@ class PMSetDataCurrentPeccStatus4(PMSetDataCurrentPeccStatus):
 class PMSetDataCurrentPeccStatus5(PMSetDataCurrentPeccStatus):
     arbitration_id = int(ConfigManager().get_power_config('PS5_ID'))
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         pecc_status = PECC.STATUS2_GUN2_DATA
         super().__init__(data, pecc_status)
 
@@ -123,7 +124,7 @@ class PMSetDataCurrentPeccStatus5(PMSetDataCurrentPeccStatus):
 class PMSetDataCurrentPeccStatus6(PMSetDataCurrentPeccStatus):
     arbitration_id = int(ConfigManager().get_power_config('PS6_ID'))
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         pecc_status = PECC.STATUS2_GUN2_DATA
         super().__init__(data, pecc_status)
 

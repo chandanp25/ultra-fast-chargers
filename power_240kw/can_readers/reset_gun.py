@@ -12,7 +12,7 @@ from power_240kw.message_helper import Module1Message as mm1, ModuleMessage as m
 class ResetGunModule1(BaseReader):
     arbitration_id = 774
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         self.data = data
         self._global_data = ConstantManager240KW()
 
@@ -32,7 +32,7 @@ class ResetGunModule1(BaseReader):
 class ResetGunModule2(BaseReader):
     arbitration_id = 1542
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         self.data = data
         self._global_data = ConstantManager240KW()
 

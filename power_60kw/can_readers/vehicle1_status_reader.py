@@ -13,12 +13,13 @@ from utility import bytetobinary, binaryToDecimal, DTH
 class Vehicle1StatusReader(BaseReader):
     arbitration_id = 769
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         self.data = data
         self._global_data = ConstantManager60KW()
-        self._binary_data = bytetobinary(data)
+        self._binary_data = None
 
     def read_input_data(self):
+        self._binary_data = bytetobinary(self.data)
         #logger.info('Read input for Vehicle-1 status')
         vs1 = self._binary_data
         self._global_data.set_data_status_vehicle1(binaryToDecimal(int(vs1[0])))
