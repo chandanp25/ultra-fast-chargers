@@ -28,7 +28,7 @@ class PowerModuleReader(BaseReader):
 class PowerModule1Reader(PowerModuleReader):
     arbitration_id = int(ConfigManager().get_power_config('PS1_ID'))
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         super().__init__(data)
 
     def read_input_data(self):
@@ -59,7 +59,7 @@ class PowerModule1Reader(PowerModuleReader):
 class PowerModule2Reader(PowerModuleReader):
     arbitration_id = int(ConfigManager().get_power_config('PS2_ID'))
 
-    def __init__(self, data):
+    def __init__(self, data=None):
         super().__init__(data)
 
     def read_input_data(self):
